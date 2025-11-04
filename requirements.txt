@@ -4,4 +4,5 @@ opencv-python
 pytorch
 torchvision
 yaml
-pandas 
+pandas
+ultralytics
