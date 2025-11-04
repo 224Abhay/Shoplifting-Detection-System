@@ -1,0 +1,6 @@
+# Required Python libraries for Shoplifting Detection System
+numpy
+opencv-python
+pytorch
+torchvision
+yaml
