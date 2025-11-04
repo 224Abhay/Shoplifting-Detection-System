@@ -3,6 +3,26 @@ import os
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+from ultralytics import YOLO
+import logging
+
+logging.getLogger("ultralytics").setLevel(logging.ERROR)
+
+yolo_model = YOLO("yolov8n.pt")
+
+def detect_humans(frame):
+    results = yolo_model(frame)
+    human_crops = []
+    for result in results:
+        for box in result.boxes.data:
+            x1, y1, x2, y2, conf, cls = box.cpu().numpy()
+            if int(cls) == 0:
+                human_crop = frame[int(y1):int(y2), int(x1):int(x2)]
+                if human_crop.size > 0:
+                    human_crop = cv2.resize(human_crop, (224, 224))
+                    human_crop = human_crop / 255.0 
+                    human_crops.append(human_crop)
+    return human_crops
 
 def extract_frames(video_path, frame_rate=5):
     cap = cv2.VideoCapture(video_path)
@@ -17,9 +37,8 @@ def extract_frames(video_path, frame_rate=5):
             break
         
         if frame_count % frame_interval == 0:
-            frame = cv2.resize(frame, (224, 224))
-            frame = frame / 255.0
-            frames.append(frame)
+            human_crops = detect_humans(frame)
+            frames.extend(human_crops)
         
         frame_count += 1
     
@@ -50,4 +69,4 @@ def process_videos(input_folder, output_folder, sequence_length=16):
     label_df.to_csv(os.path.join(output_folder, "labels.csv"), index=False)
     print(f"Processed {seq_count} sequences and saved to {output_folder}")
 
-process_videos(input_folder=r"train_for_shoplifting\Shoplifting Dataset (2022) - CV Laboratory MNNIT Allahabad", output_folder="processed_data")
+process_videos(input_folder=r"data", output_folder="processed_data")
