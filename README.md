@@ -1,26 +1,38 @@
-# Shoplifting Detection System
+# Shoplifting Detection System (v2)
 
 ## Overview
-The Shoplifting Detection System is designed to identify shoplifting activities using advanced machine learning techniques. This project leverages computer vision to detect suspicious activities in real-time.
+The Shoplifting Detection System is designed to identify shoplifting activities using advanced machine learning techniques. This project leverages computer vision and temporal memory to detect suspicious activities in real-time.
+
+
+## What's New in v2
+This version (v2) introduces significant improvements over the initial version (v1):
+- **v1**: Utilized YOLO for object detection and image data for shoplifting detection.
+- **v2**: 
+  - Introduced a **CNN** (ResNet50) for feature extraction.
+  - Added an **LSTM** for temporal memory to analyze sequences of video frames.
+  - Transitioned from image data to **video data**, which is preprocessed and converted into NumPy arrays for training and inference.
 
 ## Features
 - Real-time detection of shoplifting activities.
 - Pre-trained weights for quick deployment.
 - Configurable training and inference scripts.
+- Improved accuracy with temporal memory and video-based analysis.
+
+
+## Output Example
+
+Below is an example of the system's output, showcasing real-time shoplifting detection:
+
+![Shoplifting Detection Output](sample/output_video.gif)
 
 ## Project Structure
 ```
 shoplifting_detection/
-├── train.py          # Script for training the model
-├── run_image.py      # Script for running inference on images
-runs/
-├── detect/
-│   ├── train/
-│   │   ├── args.yaml       # Training arguments
-│   │   ├── results.csv     # Training results
-│   │   ├── weights/
-│   │   │   ├── best.pt     # Best model weights
-│   │   │   ├── last.pt     # Last model weights
+├── preprocess_data.py  # Script for preprocessing video data into NumPy arrays
+├── train_model.py      # Script for training the model
+├── test_model_on_video.py  # Script for running inference on video data
+model/
+├── shoplifting_detector.pth
 ```
 
 ## Getting Started
@@ -32,14 +44,29 @@ runs/
 ### Training the Model
 To train the model, run the following command:
 ```bash
-python train.py
+python train_model.py
 ```
 
 ### Running Inference
-To run inference on an image, use:
+To run inference on a video, use:
 ```bash
-python run_image.py --image_path <path_to_image>
+python test_model_on_video.py
 ```
+
+## Data
+https://data.mendeley.com/datasets/r3yjf35hzr/1
+
+The project uses the "Shoplifting Dataset (2022) - CV Laboratory MNNIT Allahabad" which contains:
+- **Normal**: Contains video data of normal activities.
+- **Shoplifting**: Contains video data of shoplifting activities. This data was has been refined for better training. Original was "Shoplifting Raw".
+
+### Data Preprocessing
+The video data is preprocessed and converted into NumPy arrays for efficient training and inference. The preprocessing steps include:
+1. Resizing frames to a fixed resolution.
+2. Normalizing pixel values.
+3. Converting video sequences into NumPy arrays.
+
+The `preprocess_data.py` script handles this preprocessing and organizes the data for training and testing.
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.
